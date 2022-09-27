@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strictNullChecks": true,
+    "target": "es2019",
+    "baseUrl": ".",
+    "paths": {
+      "utils": ["./src/utils"],
+      "services/*": ["./src/services/*"]
+    }
+  }
+}

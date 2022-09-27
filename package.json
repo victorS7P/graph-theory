@@ -1,0 +1,31 @@
+{
+  "name": "graph-theory",
+  "version": "1.0.0",
+  "description": "repository with code from Graph Theory class",
+  "main": "src/index.ts",
+  "repository": "git@github.com:victorS7P/graph-theory.git",
+  "author": "vcosta victorsilva7p@gmail.com",
+  "license": "MIT",
+  "scripts": {
+    "build": "typescript-module-alias-build ./src",
+    "dev": "nodemon --exec typescript-module-alias ./src",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "yarn lint --fix",
+    "prepare": "husky install",
+    "start": "typescript-module-alias ./src"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "eslint": "^8.23.1",
+    "git-commit-msg-linter": "^4.1.3",
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.8.3",
+    "typescript-module-alias": "^2.2.9"
+  }
+}
