@@ -7,7 +7,6 @@
   "author": "vcosta victorsilva7p@gmail.com",
   "license": "MIT",
   "scripts": {
-    "build": "typescript-module-alias-build ./src",
     "dev": "nodemon --exec typescript-module-alias ./src",
     "lint": "eslint . --ext .ts",
     "lint:fix": "yarn lint --fix",

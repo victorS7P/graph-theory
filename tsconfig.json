@@ -8,8 +8,10 @@
     "target": "es2019",
     "baseUrl": ".",
     "paths": {
-      "utils": ["./src/utils"],
-      "services/*": ["./src/services/*"]
+      "@data/*": ["./src/data/*"],
+      "@exercises/*": ["./src/exercises/*"],
+      "@functions/*": ["./src/functions/*"],
+      "@models/*": ["./src/models/*"]
     }
   }
 }
