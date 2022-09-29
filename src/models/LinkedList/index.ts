@@ -30,11 +30,6 @@ export class LinkedList {
     }
     return lastNode
   }
-
-  private _clear (): void {
-    this._head = new LinkedListNode(null)
-  }
-
   public append (data: LinkedListData): void {
     this.last.append(data)
   }
@@ -55,6 +50,18 @@ export class LinkedList {
     }
 
     return (lastNode.data === data)
+  }
+
+  public get connectedNodes (): number[] {
+    let nodes: number[] = []
+    let current = this._head
+
+    while (current.next) {
+      nodes = [ ...nodes, Number(current.next.data) ]
+      current = current.next
+    }
+
+    return nodes
   }
 
   public toString (): string {

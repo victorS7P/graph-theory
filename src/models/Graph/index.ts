@@ -8,6 +8,28 @@ export class Graph {
   protected _nodes: number
   protected _matriz: GraphArray
 
+  public get nodesList (): number[] {
+    return new Array(this._nodes).fill(1).map((_, i) => i + 1)
+  }
+
+  public get linkedLists (): LinkedList[] {
+    return this._matriz.map(
+      (connections, a) => {
+        const linkedList = new LinkedList(`${a + 1}`)
+
+        connections.forEach(
+          (isConnected, b) => {
+            if (isConnected) {
+              linkedList.append(`${b + 1}`)
+            }
+          }
+        )
+
+        return linkedList
+      }
+    )
+  }
+
   public constructor (nodes: number) {
     this._nodes = Number(nodes)
     this._matriz = new Array(nodes).fill(0).map(() => (
@@ -31,24 +53,6 @@ export class Graph {
     }
 
     return graph
-  }
-
-  public get linkedLists (): LinkedList[] {
-    return this._matriz.map(
-      (connections, a) => {
-        const linkedList = new LinkedList(`${a + 1}`)
-
-        connections.forEach(
-          (isConnected, b) => {
-            if (isConnected) {
-              linkedList.append(`${b + 1}`)
-            }
-          }
-        )
-
-        return linkedList
-      }
-    )
   }
 
   public connectNodes (a: number, b: number): void {
@@ -101,56 +105,13 @@ export class Graph {
     )
   }
 
-  // isSimpleCycle(nodes = [], useLkl = false) {
-  //   const startIsEnd = nodes[0] === nodes[nodes.length - 1]
-  //   const noDuplicates = (new Set(nodes).size === (nodes.length - 1)) && startIsEnd
-  //   return (noDuplicates && this.isCycle(nodes, useLkl)) ? 1 : 0
-  // }
-
-  // connectedNodes(node, useLkl = false) {
-  //   if (useLkl) {
-  //     this.getLkl()
-  //   }
-
-  //   return this.mtz[node - 1]
-  //     .map(
-  //       (connected, i) => (
-  //         connected ? (i + 1) : 0
-  //       )
-  //     )
-  //     .filter(n => n > 0)
-  // }
-
-  // getPath(a, b, useLkl = false, visited = [], path = []) {
-  //   if (a === b) {
-  //     return [...path, b]
-  //   }
-
-  //   const currentPath = [...path, a]
-
-  //   const connectedNodes = this.connectedNodes(a)
-  //     .filter(n => !visited.includes(n))
-
-  //   let pathToReturn = []
-  //   connectedNodes.forEach(node => {
-  //     const nextPath = this.getPath(node, b, useLkl, [...visited, a], currentPath)
-  //     if (nextPath.length > currentPath.length) {
-  //       pathToReturn = nextPath
-  //     }
-  //   })
-
-  //   return pathToReturn
-  // }
-
-  // hasPathDFS(a, b, useLkl = false) {
-  //   return this.getPath(a, b, useLkl).length ? 1 : 0
-  // }
-
-  // printMtz() {
-  //   console.log(this.mtz)
-  // }
-
-  // printLkl() {
-  //   this.getLkl().map(l => l.print())
-  // }
+  public getConnectedNodes (node: number): number[] {
+    return this._matriz[node - 1]
+      .map(
+        (connected, i) => (
+          connected ? (i + 1) : 0
+        )
+      )
+      .filter(n => n > 0)
+  }
 }

@@ -10,7 +10,6 @@
     "paths": {
       "@data/*": ["./src/data/*"],
       "@exercises/*": ["./src/exercises/*"],
-      "@functions/*": ["./src/functions/*"],
       "@models/*": ["./src/models/*"]
     }
   }
