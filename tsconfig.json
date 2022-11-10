@@ -8,9 +8,9 @@
     "target": "es2019",
     "baseUrl": ".",
     "paths": {
-      "@data/*": ["./src/data/*"],
-      "@exercises/*": ["./src/exercises/*"],
-      "@models/*": ["./src/models/*"]
+      "@data/*": ["src/data/*"],
+      "@exercises/*": ["src/exercises/*"],
+      "@models/*": ["src/models/*"]
     }
   }
 }

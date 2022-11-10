@@ -182,4 +182,20 @@ export class Digraph extends Graph {
 
     return ARCH_TYPES.CROSS
   }
+
+  public getAllArchs (): Array<{
+    from: number,
+    to: number,
+    arch: ARCH_TYPES
+  }> {
+    return this._matriz.flatMap((_, from) => (
+      this._matriz[from].flatMap((_, to) => from === to
+        ? []
+        : ({
+          from, to,
+          arch: this.getArch(from + 1, to + 1)
+        })
+      )
+    ))
+  }
 }

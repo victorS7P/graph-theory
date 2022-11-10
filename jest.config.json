@@ -1,0 +1,12 @@
+{
+  "preset": "ts-jest",
+  "transform": {
+    "^.+\\.(ts|tsx)?$": "ts-jest",
+    "^.+\\.(js|jsx)$": "babel-jest"
+  },
+  "moduleNameMapper": {
+    "^@data(.*)$": "<rootDir>src/data$1",
+    "^@exercises(.*)$": "<rootDir>src/exercises$1",
+    "^@models(.*)$": "<rootDir>src/models$1"
+  }
+}

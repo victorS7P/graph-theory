@@ -114,4 +114,8 @@ export class Graph {
       )
       .filter(n => n > 0)
   }
+
+  public get clone (): Graph {
+    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+  }
 }
