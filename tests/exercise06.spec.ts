@@ -1,6 +1,6 @@
 import { Graph } from '@models/Graph'
 
-describe('Exercises 05', () => {
+describe('Exercises 06', () => {
   describe('Graph', () => {
     const g = new Graph(8)
     g.connectNodes(1, 2)

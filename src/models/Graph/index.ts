@@ -311,4 +311,155 @@ export class Graph {
       partitions
     }
   }
+
+  public getBridgesNaive (): Array<Array<number>> {
+    const bridges: Array<Array<number>> = []
+    const visited: Array<Array<number>> = []
+    
+    this.connections.forEach(c => {
+      const alreadyVisited = visited.some(v => (
+        v[0] === c[0] && v[1] === c[1] ||
+        v[1] === c[0] && v[0] === c[1]
+      ))
+
+      if (!alreadyVisited) {
+        const clone = this.clone(this)
+        clone.disconnectNodes(c[0], c[1])
+
+        if (this.componentsNumber() !== clone.componentsNumber()) {
+          bridges.push(c)
+        }
+      }
+
+      visited.push(c)
+    })
+
+    return bridges
+  }
+
+  public getPreLowInfo (): Map<'string', { pre: number, low: number }> {
+    let pre = 0, low = 0
+    const nodesInfo: Map<'string', {
+      pre: number,
+      low: number
+    }> = new Map()
+
+    this.nodesList.forEach(node => {
+      nodesInfo[node.toString()] = { pre, low }
+    })
+
+    const visited: Array<number> = []
+    for (const node of this.nodesList) {
+      if (visited.includes(node)) { continue }
+
+      pre = low = 1
+      if (!nodesInfo[node.toString()].color) {
+        nodesInfo[node.toString()] = { pre, low }
+      }
+
+      StackFunctions.getDFSPath(this, node, -1, {
+        onPop: n => {
+          visited.push(n)
+        },
+
+        onPush: n => {
+          pre++
+          low++
+
+          nodesInfo[n] = { pre, low }
+        },
+
+        onDiscoverConnecteds: (connecteds, stack) => {
+          const node = stack[stack.length - 1]
+          const parentNode = stack[stack.length - 2]
+
+          const cleanStack = stack.filter(s => s !== parentNode && s !== node)
+          const backToStart = connecteds.find(c => cleanStack.includes(c))
+
+          if (
+            backToStart &&
+            nodesInfo[node].pre === nodesInfo[node].low
+          ) {
+            nodesInfo[node] = {
+              pre: nodesInfo[node].pre,
+              low: nodesInfo[backToStart].low
+            }
+
+            connecteds.forEach(c => {
+              nodesInfo[c] = {
+                pre: nodesInfo[c].pre,
+                low: nodesInfo[backToStart].low
+              }
+            })
+          }
+
+          if (nodesInfo[node].low < nodesInfo[node].pre) {
+            connecteds.filter(c => !visited.includes(c)).forEach(c => {
+              nodesInfo[c] = {
+                pre: nodesInfo[c].pre,
+                low: nodesInfo[node].low
+              }
+            })
+          }
+        }
+      })
+    }
+
+    return nodesInfo
+  }
+
+  public getBridgesDFS (): Array<Array<number>> {
+    const nodesInfo = this.getPreLowInfo()  
+
+    return this.connections.filter(([a, b]) => (
+      nodesInfo[a].low  >  nodesInfo[b].pre &&
+      nodesInfo[a].low === nodesInfo[a].pre
+    ))
+  }
+
+  public getArticulationsNaive (): Array<number> {
+    const articulations: Array<number> = []
+
+    this.nodesList.forEach(node => {
+      const clone = new Graph(this._nodes - 1)
+      this.connections.forEach(([a, b]) => {
+        if (a !== node && b !== node) {
+          const newA = a > node ? (a - 1) : a
+          const newB = b > node ? (b - 1) : b
+
+          clone.connectNodes(newA, newB)
+        }
+      })
+
+      if (this.componentsNumber() !== clone.componentsNumber()) {
+        articulations.push(node)
+      }
+    })
+
+    return articulations
+  }
+
+  public getArticulationsDFS (): Array<number> {
+    const nodesInfo = this.getPreLowInfo()
+    const bridges = this.getBridgesDFS()
+
+    return this.nodesList.filter(n => {
+      const bridge = bridges.find(([a, b]) => a === n || b === n)
+
+      if (bridge) {
+        const otherNode = bridge[0] === n ? bridge[1] : bridge[0]
+        return (
+          nodesInfo[otherNode].low >= nodesInfo[n].pre || 
+          nodesInfo[n].low >= nodesInfo[otherNode].pre
+        )
+      }
+    })
+  }
+
+  public isBiconnected (): boolean {
+    return (
+      this.getArticulationsDFS().length === 0 &&
+      this.getBridgesDFS().length === 0
+    )
+  }
 }
