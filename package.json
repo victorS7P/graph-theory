@@ -12,7 +12,7 @@
     "lint:fix": "yarn lint --fix",
     "prepare": "husky install",
     "start": "typescript-module-alias ./src",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "dependencies": {
     "ts-node": "^10.9.1"

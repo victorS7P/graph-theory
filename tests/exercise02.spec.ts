@@ -1,17 +1,9 @@
 import { Graph } from '@models/Graph'
 import { ARCH_TYPES, Digraph } from '@models/Digraph'
 
-import {
-  getDFSPathArray,
-  getDFSPathLinkedList,
-  hasDFSPathArray,
-  hasDFSPathLinkedList,
-  isCycleArray,
-  isCycleLinkedList,
-  isSimpleCycleLinkedList,
-  isSimpleCyrcleArray,
-  getDFSPathStack
-} from '@exercises/02'
+import { StackFunctions } from '@functions/Stack'
+import { ArrayFunctions } from '@functions/Array'
+import { LinkedListFunctions } from '@functions/LinkedList'
 
 describe('Exercises 02', () => {
   describe('Graph', () => {
@@ -25,31 +17,31 @@ describe('Exercises 02', () => {
     describe('Using Array', () => {
       describe('is circle', () => {
         it('Graph g nodes [1, 5, 3, 2, 1] should compose a cycle', () => {
-          expect(isCycleArray(g, [1, 5, 3, 2, 1])).toBe(true)
+          expect(ArrayFunctions.isCycle(g, [1, 5, 3, 2, 1])).toBe(true)
         })
 
         it('Graph g nodes [1, 4, 3, 1] should not compose a cycle', () => {
-          expect(isCycleArray(g, [1, 4, 3, 1])).toBe(false)
+          expect(ArrayFunctions.isCycle(g, [1, 4, 3, 1])).toBe(false)
         })
       })
 
       describe('is simple circle', () => {
         it('Graph g nodes [1, 5, 3, 1] should compose a simple cycle', () => {
-          expect(isSimpleCyrcleArray(g, [1, 5, 3, 2, 1])).toBe(true)
+          expect(ArrayFunctions.isSimpleCyrcle(g, [1, 5, 3, 2, 1])).toBe(true)
         })
 
         it('Graph g nodes [1, 5, 3, 5, 1] should not compose a simple cycle', () => {
-          expect(isSimpleCyrcleArray(g, [1, 5, 3, 5, 1])).toBe(false)
+          expect(ArrayFunctions.isSimpleCyrcle(g, [1, 5, 3, 5, 1])).toBe(false)
         })
       })
 
       describe('has path DFS', () => {
         it('nodes 3 and 2 should have a path', () => {
-          expect(hasDFSPathArray(g, 3, 2, [], [])).toBe(true)
+          expect(ArrayFunctions.hasDFSPath(g, 3, 2, [], [])).toBe(true)
         })
 
         it('nodes 3 and 4 should have a path', () => {
-          expect(hasDFSPathArray(g, 3, 4, [], [])).toBe(false)
+          expect(ArrayFunctions.hasDFSPath(g, 3, 4, [], [])).toBe(false)
         })
       })
     })
@@ -57,31 +49,31 @@ describe('Exercises 02', () => {
     describe('Using Linked List', () => {
       describe('is circle', () => {
         it('Graph g nodes [1, 5, 3, 2, 1] should compose a cycle', () => {
-          expect(isCycleLinkedList(g, [1, 5, 3, 2, 1])).toBe(true)
+          expect(LinkedListFunctions.isCycle(g, [1, 5, 3, 2, 1])).toBe(true)
         })
 
         it('Graph g nodes [1, 4, 3, 1] should not compose a cycle', () => {
-          expect(isCycleLinkedList(g, [1, 4, 3, 1])).toBe(false)
+          expect(LinkedListFunctions.isCycle(g, [1, 4, 3, 1])).toBe(false)
         })
       })
 
       describe('is simple circle', () => {
         it('Graph g nodes [1, 5, 3, 1] should compose a simple cycle', () => {
-          expect(isSimpleCycleLinkedList(g, [1, 5, 3, 2, 1])).toBe(true)
+          expect(LinkedListFunctions.isSimpleCycle(g, [1, 5, 3, 2, 1])).toBe(true)
         })
 
         it('Graph g nodes [1, 5, 3, 5, 1] should not compose a simple cycle', () => {
-          expect(isSimpleCycleLinkedList(g, [1, 5, 3, 5, 1])).toBe(false)
+          expect(LinkedListFunctions.isSimpleCycle(g, [1, 5, 3, 5, 1])).toBe(false)
         })
       })
 
       describe('has path DFS', () => {
         it('nodes 3 and 2 should have a path', () => {
-          expect(hasDFSPathLinkedList(g, 3, 2, [], [])).toBe(true)
+          expect(LinkedListFunctions.hasDFSPath(g, 3, 2, [], [])).toBe(true)
         })
 
         it('nodes 3 and 4 should have a path', () => {
-          expect(hasDFSPathLinkedList(g, 3, 4, [], [])).toBe(false)
+          expect(LinkedListFunctions.hasDFSPath(g, 3, 4, [], [])).toBe(false)
         })
       })
     })
@@ -98,35 +90,35 @@ describe('Exercises 02', () => {
     describe('Using Array', () => {
       describe('is circle', () => {
         it('Digraph d nodes [3, 4, 5, 3] should compose a cycle', () => {
-          expect(isCycleArray(d, [3, 4, 5, 3])).toBe(true)
+          expect(ArrayFunctions.isCycle(d, [3, 4, 5, 3])).toBe(true)
         })
 
         it('Digraph d nodes [1, 3, 4, 1] should not compose a cycle', () => {
-          expect(isCycleArray(d, [1, 3, 4, 1])).toBe(false)
+          expect(ArrayFunctions.isCycle(d, [1, 3, 4, 1])).toBe(false)
         })
       })
 
       describe('has path DFS', () => {
         it('nodes 1 and 5 should have a path', () => {
-          expect(hasDFSPathArray(d, 1, 5, [], [])).toBe(true)
+          expect(ArrayFunctions.hasDFSPath(d, 1, 5, [], [])).toBe(true)
         })
 
         it('nodes 3 and 1 should have a path', () => {
-          expect(hasDFSPathArray(d, 3, 1, [], [])).toBe(false)
+          expect(ArrayFunctions.hasDFSPath(d, 3, 1, [], [])).toBe(false)
         })
       })
 
       describe('get DFS path', () => {
         it('Digraph d nodes 1 and 5 path should be [1, 3, 4, 5]', () => {
-          expect(getDFSPathArray(d, 1, 5, [], [])).toEqual([1, 3, 4, 5])
+          expect(ArrayFunctions.getDFSPath(d, 1, 5, [], [])).toEqual([1, 3, 4, 5])
         })
 
         it('Digraph d nodes 1 and 2 path should be [1, 2]', () => {
-          expect(getDFSPathArray(d, 1, 2, [], [])).toEqual([1, 2])
+          expect(ArrayFunctions.getDFSPath(d, 1, 2, [], [])).toEqual([1, 2])
         })
 
         it('Digraph d nodes 3 and 2 path should be []', () => {
-          expect(getDFSPathArray(d, 3, 2, [], [])).toEqual([])
+          expect(ArrayFunctions.getDFSPath(d, 3, 2, [], [])).toEqual([])
         })
       })
     })
@@ -134,35 +126,35 @@ describe('Exercises 02', () => {
     describe('Using Linked List', () => {
       describe('is circle', () => {
         it('Digraph d nodes [3, 4, 5, 3] should compose a cycle', () => {
-          expect(isCycleLinkedList(d, [3, 4, 5, 3])).toBe(true)
+          expect(LinkedListFunctions.isCycle(d, [3, 4, 5, 3])).toBe(true)
         })
 
         it('Digraph d nodes [1, 3, 4, 1] should not compose a cycle', () => {
-          expect(isCycleLinkedList(d, [1, 3, 4, 1])).toBe(false)
+          expect(LinkedListFunctions.isCycle(d, [1, 3, 4, 1])).toBe(false)
         })
       })
 
       describe('has path DFS', () => {
         it('nodes 1 and 5 should have a path', () => {
-          expect(hasDFSPathLinkedList(d, 1, 5, [], [])).toBe(true)
+          expect(LinkedListFunctions.hasDFSPath(d, 1, 5, [], [])).toBe(true)
         })
 
         it('nodes 3 and 1 should have a path', () => {
-          expect(hasDFSPathLinkedList(d, 3, 1, [], [])).toBe(false)
+          expect(LinkedListFunctions.hasDFSPath(d, 3, 1, [], [])).toBe(false)
         })
       })
 
       describe('get DFS path', () => {
         it('Digraph d nodes 1 and 5 path should be [1, 3, 4, 5]', () => {
-          expect(getDFSPathLinkedList(d, 1, 5, [], [])).toEqual([1, 3, 4, 5])
+          expect(LinkedListFunctions.getDFSPath(d, 1, 5, [], [])).toEqual([1, 3, 4, 5])
         })
 
         it('Digraph d nodes 1 and 2 path should be [1, 2]', () => {
-          expect(getDFSPathLinkedList(d, 1, 2, [], [])).toEqual([1, 2])
+          expect(LinkedListFunctions.getDFSPath(d, 1, 2, [], [])).toEqual([1, 2])
         })
 
         it('Digraph d nodes 3 and 2 path should be []', () => {
-          expect(getDFSPathLinkedList(d, 3, 2, [], [])).toEqual([])
+          expect(LinkedListFunctions.getDFSPath(d, 3, 2, [], [])).toEqual([])
         })
       })
     })
@@ -170,15 +162,15 @@ describe('Exercises 02', () => {
     describe('Using Stack', () => {
       describe('get DFS path', () => {
         it('Digraph d nodes 1 and 5 path should be [1, 3, 4, 5]', () => {
-          expect(getDFSPathStack(d, 1, 5)).toEqual([1, 3, 4, 5])
+          expect(StackFunctions.getDFSPath(d, 1, 5)).toEqual([1, 3, 4, 5])
         })
 
         it('Digraph d nodes 1 and 2 path should be [1, 2]', () => {
-          expect(getDFSPathStack(d, 1, 2)).toEqual([1, 2])
+          expect(StackFunctions.getDFSPath(d, 1, 2)).toEqual([1, 2])
         })
 
         it('Digraph d nodes 3 and 2 path should be []', () => {
-          expect(getDFSPathStack(d, 3, 2)).toEqual([])
+          expect(StackFunctions.getDFSPath(d, 3, 2)).toEqual([])
         })
       })
     })

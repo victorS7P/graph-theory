@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 
 import { LinkedList } from '@models/LinkedList'
+import { LinkedListFunctions } from '@functions/LinkedList'
 
 export type GraphArray = boolean[][]
 
@@ -28,6 +29,18 @@ export class Graph {
         return linkedList
       }
     )
+  }
+
+  public get connections (): number[][] {
+    const connections: number[][] = []
+
+    this._matriz.forEach((_, a) => {
+      this._matriz.forEach((_, b) => {
+        if (this._matriz[a][b]) { connections.push([a+1, b+1]) }
+      })
+    })
+
+    return connections
   }
 
   public constructor (nodes: number) {
@@ -115,7 +128,38 @@ export class Graph {
       .filter(n => n > 0)
   }
 
-  public get clone (): Graph {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+  public hasOtherPathBesidesDirect (start: number, end: number): boolean {
+    const clone = this.clone(this)
+    clone.disconnectNodes(start, end)
+    return LinkedListFunctions.hasDFSPath(clone, start, end, [], [])
+  }
+
+  public hasCycle (): boolean {
+    const nodes = this.nodesList
+    let hasCycle = false
+
+    for (const node of nodes) {
+      for (const adjascentNode of this.getConnectedNodes(node)) {
+        if (this.hasOtherPathBesidesDirect(adjascentNode, node)) {
+          hasCycle = true
+          break
+        }
+      }
+
+      if (hasCycle) {
+        break
+      }
+    }
+
+    return hasCycle
+  }
+
+  public clone (graph: Graph): Graph {
+    const copy = new Graph(graph._nodes)
+    graph.connections.forEach(([a, b]) => {
+      copy.connectNodes(a, b)
+    })
+
+    return copy
   }
 }

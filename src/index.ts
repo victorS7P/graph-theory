@@ -1,5 +1,1 @@
-const run = async (): Promise<void> => {
-  console.log('Lorem Ipsum')
-}
-
-run()
+console.log('use yarn test')

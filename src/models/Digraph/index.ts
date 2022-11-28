@@ -1,3 +1,4 @@
+import { StackFunctions } from '@functions/Stack'
 import { Graph } from '@models/Graph'
 
 export enum ARCH_TYPES {
@@ -6,6 +7,12 @@ export enum ARCH_TYPES {
   RETURN = 'RETURN',
   CROSS = 'CROSS',
   NONE = 'NONE'
+}
+
+export enum NODE_DFS_COLOR {
+  WHITE = 'not visited',
+  GRAY = 'processing',
+  BLACK = 'processed'
 }
 
 interface DFSForestNodeInterface {
@@ -145,8 +152,8 @@ export class Digraph extends Graph {
     return DFSForestInfo
   }
 
-  public getArch (from: number, to: number): ARCH_TYPES {
-    if (!this.isDFSForest()) {
+  public getArch (from: number, to: number, useDFSForest = true): ARCH_TYPES {
+    if (useDFSForest && !this.isDFSForest()) {
       return ARCH_TYPES.NONE
     }
 
@@ -193,9 +200,75 @@ export class Digraph extends Graph {
         ? []
         : ({
           from, to,
-          arch: this.getArch(from + 1, to + 1)
+          arch: this.getArch(from + 1, to + 1, false)
         })
       )
     ))
+  }
+
+  public hasCycleUsingReturnArchs (): boolean {
+    return this.getAllArchs().some(
+      ({ from, to, arch }) => (
+        arch === ARCH_TYPES.RETURN && this.hasConnection(from + 1, to + 1)
+      )
+    )
+  }
+
+  public clone (digraph: Digraph): Digraph {
+    const copy = new Digraph(digraph._nodes)
+    digraph.connections.forEach(([a, b]) => {
+      copy.connectNodes(a, b)
+    })
+
+    return copy
+  }
+
+  public hasCycleUsingColors (): boolean {
+    let hasCycle = false
+
+    const coloredNodes: Map<'string', {
+      data: string,
+      color: NODE_DFS_COLOR
+    }> = new Map()
+
+    this.nodesList.forEach(node => {
+      coloredNodes[node.toString()] = {
+        data: node.toString(),
+        color: NODE_DFS_COLOR.WHITE
+      }
+    })
+
+    const roots = this.getArborescenceRoots()
+    for (const node of roots) {
+      coloredNodes[node.toString()] = {
+        data: node.toString(),
+        color: NODE_DFS_COLOR.GRAY
+      }
+
+      StackFunctions.getDFSPath(this, node, -1, {
+        onPush: (n) => {
+          coloredNodes[n.toString()] = {
+            data: n.toString(),
+            color: NODE_DFS_COLOR.GRAY
+          }
+        },
+        onPop: (n) => {
+          coloredNodes[n.toString()] = {
+            data: n.toString(),
+            color: NODE_DFS_COLOR.BLACK
+          }
+        },
+        onDiscoverConnecteds: (c) => {
+          hasCycle = (c.some(n => coloredNodes[n].color === NODE_DFS_COLOR.GRAY)) || hasCycle
+        }
+      })
+
+      coloredNodes[node.toString()] = {
+        data: node.toString(),
+        color: NODE_DFS_COLOR.BLACK
+      }
+    }
+
+    return hasCycle
   }
 }

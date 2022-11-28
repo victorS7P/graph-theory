@@ -1,13 +1,9 @@
 import { Graph } from '@models/Graph'
 import { Digraph } from '@models/Digraph'
 
-import {
-  hasCycle,
-  hasCycleUsingReturnArchs,
-  hasCycleUsingStack
-} from '@exercises/03'
+import { StackFunctions } from '@functions/Stack'
 
-describe('Exercises 02', () => {
+describe('Exercises 03', () => {
   describe('Graph', () => {
     const graphWithCycle = new Graph(5)
     graphWithCycle.connectNodes(1, 3)
@@ -24,11 +20,11 @@ describe('Exercises 02', () => {
 
     describe('has circle', () => {
       it('graphWithCycle should has a cycle', () => {
-        expect(hasCycle(graphWithCycle)).toBe(true)
+        expect(graphWithCycle.hasCycle()).toBe(true)
       })
 
       it('graphWithoutCycle should not have a cycle', () => {
-        expect(hasCycle(graphWithoutCycle)).toBe(false)
+        expect(graphWithoutCycle.hasCycle()).toBe(false)
       })
     })
   })
@@ -36,8 +32,9 @@ describe('Exercises 02', () => {
   describe('Digraph', () => {
     const digraphWithCycle = new Digraph(5)
     digraphWithCycle.connectNodes(1, 3)
+    digraphWithCycle.connectNodes(2, 3)
     digraphWithCycle.connectNodes(3, 5)
-    digraphWithCycle.connectNodes(5, 1)
+    digraphWithCycle.connectNodes(5, 2)
 
     const digraphWithoutCycle = new Digraph(5)
     digraphWithoutCycle.connectNodes(1, 2)
@@ -47,42 +44,42 @@ describe('Exercises 02', () => {
 
     describe('has circle', () => {
       it('digraphWithCycle should has a cycle', () => {
-        expect(hasCycle(digraphWithCycle)).toBe(true)
+        expect(digraphWithCycle.hasCycle()).toBe(true)
       })
 
       it('digraphWithoutCycle should not have a cycle', () => {
-        expect(hasCycle(digraphWithoutCycle)).toBe(false)
+        expect(digraphWithoutCycle.hasCycle()).toBe(false)
       })
     })
 
     describe('has circle (using stack)', () => {
       it('digraphWithCycle should has a cycle', () => {
-        expect(hasCycleUsingStack(digraphWithCycle)).toBe(true)
+        expect(StackFunctions.hasCycle(digraphWithCycle)).toBe(true)
       })
 
       it('digraphWithoutCycle should not have a cycle', () => {
-        expect(hasCycleUsingStack(digraphWithoutCycle)).toBe(false)
+        expect(StackFunctions.hasCycle(digraphWithoutCycle)).toBe(false)
       })
     })
 
     describe('has circle (using return archs)', () => {
       it('digraphWithCycle should has a cycle', () => {
-        expect(hasCycleUsingReturnArchs(digraphWithCycle)).toBe(true)
+        expect(digraphWithCycle.hasCycleUsingReturnArchs()).toBe(true)
       })
 
       it('digraphWithoutCycle should not have a cycle', () => {
-        expect(hasCycleUsingReturnArchs(digraphWithoutCycle)).toBe(false)
+        expect(digraphWithoutCycle.hasCycleUsingReturnArchs()).toBe(false)
       })
     })
 
-    // describe('has circle (using colors)', () => {
-    //   it('digraphWithCycle should has a cycle', () => {
-    //     expect(hasCycleUsingReturnArchs(digraphWithCycle)).toBe(true)
-    //   })
+    describe('has circle (using colors)', () => {
+      it('digraphWithCycle should has a cycle', () => {
+        expect(digraphWithCycle.hasCycleUsingColors()).toBe(true)
+      })
 
-    //   it('digraphWithoutCycle should not have a cycle', () => {
-    //     expect(hasCycleUsingReturnArchs(digraphWithoutCycle)).toBe(false)
-    //   })
-    // })
+      it('digraphWithoutCycle should not have a cycle', () => {
+        expect(digraphWithoutCycle.hasCycleUsingColors()).toBe(false)
+      })
+    })
   })
 })
