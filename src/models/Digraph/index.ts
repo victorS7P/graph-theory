@@ -271,4 +271,20 @@ export class Digraph extends Graph {
 
     return hasCycle
   }
+
+  public topologicalOrder (): Array<number> {
+    if (this.hasCycleUsingReturnArchs()) { return [] }
+
+    const dfsInfo = this.getDFSForestInfo()
+    const endedInfo = [] as Array<{ node: string, end: number }>
+
+    for (const node in dfsInfo) {
+      endedInfo.push({
+        node,
+        end: dfsInfo[node].ended
+      })
+    }
+
+    return endedInfo.sort((a, b) => b.end - a.end).map(n => Number(n.node))
+  }
 }
