@@ -2,8 +2,14 @@ import fs from 'fs/promises'
 
 import { LinkedList } from '@models/LinkedList'
 import { LinkedListFunctions } from '@functions/LinkedList'
+import { StackFunctions } from '@functions/Stack'
 
 export type GraphArray = boolean[][]
+
+export enum BIPARTITE_COLOR {
+  RED = 'red',
+  BLUE = 'blue'
+}
 
 export class Graph {
   protected _nodes: number
@@ -65,6 +71,14 @@ export class Graph {
       graph.connectNodes(a + 1, b + 1)
     }
 
+    return graph
+  }
+
+  public static fromLetCode886 (n: number, dislikes: Array<Array<number>>): Graph {
+    const graph = new Graph(n)
+    dislikes.forEach(d => {
+      graph.connectNodes(d[0] + 1, d[1] + 1)
+    })
     return graph
   }
 
@@ -239,5 +253,62 @@ export class Graph {
 
   public isConnected (): boolean {
     return (this.componentsNumber() === 1)
+  }
+
+  public bipartiteInfo (): { isBipartite: boolean, partitions: Array<Array<number>> } {
+    if (this._nodes % 2 === 1) {
+      return {
+        isBipartite: false,
+        partitions: []
+      }
+    }
+
+    let isBipartite = true
+    const coloredNodes: Map<'string', {
+      data: string,
+      color: BIPARTITE_COLOR
+    }> = new Map()
+
+    this.nodesList.forEach(node => {
+      coloredNodes[node.toString()] = {
+        data: node.toString(),
+        color: undefined
+      }
+    })
+
+    for (const node of this.nodesList) {
+      if (!coloredNodes[node.toString()].color) {
+        coloredNodes[node.toString()] = {
+          data: node.toString(),
+          color: BIPARTITE_COLOR.RED
+        }
+      }
+
+      StackFunctions.getDFSPath(this, node, -1, {
+        onDiscoverConnecteds: (connecteds, stack) => {
+          if (connecteds.some(n => coloredNodes[n].color === coloredNodes[stack[stack.length - 1]].color)) {
+            isBipartite = false
+          } else {
+            connecteds.forEach(n => {
+              coloredNodes[n] = {
+                data: n.toString(),
+                color: coloredNodes[stack[stack.length - 1]].color === BIPARTITE_COLOR.RED ? BIPARTITE_COLOR.BLUE : BIPARTITE_COLOR.RED
+              }
+            })
+          }
+        }
+      })
+    }
+
+    const partitions: Array<Array<number>> = []
+    if (isBipartite) {
+      partitions[0] = this.nodesList.filter(node => coloredNodes[node].color === BIPARTITE_COLOR.RED)
+      partitions[1] = this.nodesList.filter(node => coloredNodes[node].color === BIPARTITE_COLOR.BLUE)
+    }
+
+    return {
+      isBipartite,
+      partitions
+    }
   }
 }
