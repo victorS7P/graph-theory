@@ -7,7 +7,6 @@ export class StackFunctions {
   public static getDFSPath (graph: Graph, start: number, end: number, callbacks?: {
     onPush?: DFSCallback
     onPop?: DFSCallback
-    onVisit?: DFSCallback
     onDiscoverConnecteds?: (connectedNodes: Array<number>, stack: Array<number>) => void
   }): number[] {
     const stack = [start]

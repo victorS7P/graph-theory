@@ -287,4 +287,49 @@ export class Digraph extends Graph {
 
     return endedInfo.sort((a, b) => b.end - a.end).map(n => Number(n.node))
   }
+
+  public stronglyConnectedComponents (): Array<Array<number>> {
+    const stronglyConnectedComponents: Array<Array<number>> = []
+
+    const order: Array<number> = []
+    for (const node of this.nodesList) {
+      if (!order.includes(node)) {
+        StackFunctions.getDFSPath(this, node, -1, {
+          onPop: n => {
+            if (!order.includes(n)) {
+              order.push(n)
+            }
+          }
+        })
+      }
+    }
+
+    const transposed = new Digraph(this._nodes)
+    this.connections.forEach(([a, b]) => {
+      transposed.connectNodes(b, a)
+    })
+
+    const visited: Array<number> = []
+    let nextComponent: Array<number> = []
+
+    for (const node of order.reverse()) {
+      if (!visited.includes(node)) {
+        nextComponent = []
+
+        StackFunctions.getDFSPath(transposed, node, -1, {
+          onPop: n => {
+            if (!nextComponent.includes(n)) {
+              nextComponent.push(n)
+            }
+
+            visited.push(n)
+          }
+        })
+
+        stronglyConnectedComponents.push(nextComponent)
+      }
+    }
+
+    return stronglyConnectedComponents
+  }
 }

@@ -162,4 +162,82 @@ export class Graph {
 
     return copy
   }
+
+  public hasSameNodes (graph: Graph): boolean {
+    return this.nodesList.some(n => graph.nodesList.includes(n))
+  }
+
+  public hasSameConnections (graph: Graph): boolean {
+    return this.connections.every(
+      c => graph.connections.some(a => (
+        a[0] === c[0] && a[1] === c[1]
+      ))
+    )
+  }
+
+  public hasAllNodes (graph: Graph): boolean {
+    return graph.nodesList.every(n => this.nodesList.includes(n))
+  }
+
+  public isSubgraph (graph: Graph): boolean {
+    return graph.hasSameNodes(this) && graph.hasSameConnections(this)
+  }
+
+  public isGeneratorSubgraph (graph: Graph): boolean {
+    return this.isSubgraph(graph) && graph.hasAllNodes(this)
+  }
+
+  public inducedGraph (nodes: Array<number>): Graph {
+    if (nodes.length <= 1) {
+      throw 'cant create graph wiht only one node'
+    }
+
+    if (!nodes.some(n => this.nodesList.includes(n))) {
+      throw 'cant create graph wiht nodes that doesnt exist'
+    }
+
+    const induced = new Graph(nodes.sort((a, b) => a - b).reverse()[0])
+
+    this.connections.forEach(c => {
+      if (nodes.includes(c[0]) && nodes.includes(c[1])) {
+        induced.connectNodes(c[0], c[1])
+      }
+    })
+
+    if (induced.connections.length === 0) {
+      throw 'cant create graph without connections'
+    }
+
+    return induced
+  }
+  
+  public getAllOnComponent (node: number): Array<number> {
+    const allOnComponent = [node]
+
+    for (const node of allOnComponent) {
+      const connecteds = this.getConnectedNodes(node)
+      allOnComponent.push(...connecteds.filter(c => !allOnComponent.includes(c)))
+    }
+
+    return allOnComponent
+  }
+
+  public componentsNumber (): number {
+    let componentsNumber = 0
+    const visited: Array<number> = []
+
+    for (const node of this.nodesList) {
+      if (!visited.includes(node)) {
+        componentsNumber++
+        const allOnComponent = this.getAllOnComponent(node)
+        visited.push(...allOnComponent)
+      }
+    }
+
+    return componentsNumber
+  }
+
+  public isConnected (): boolean {
+    return (this.componentsNumber() === 1)
+  }
 }
