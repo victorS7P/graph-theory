@@ -42,4 +42,12 @@ export class LinkedListFunctions {
   public static hasDFSPath (graph: Graph, start: number, end: number, visited: number[], path: number[]): boolean {
     return this.getDFSPath(graph, start, end, visited, path).length > 0
   }
+
+  public static isEulerian (graph: Graph): boolean {
+    return graph.isConnected() && graph.linkedLists.every(l => l.connectedNodes.length % 2 === 0)
+  }
+
+  public static hasEulerianTrail (graph: Graph): boolean {
+    return graph.isConnected() && graph.linkedLists.filter(l => l.connectedNodes.length % 2 === 1).length <= 2
+  }
 }

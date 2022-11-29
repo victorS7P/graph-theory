@@ -3,6 +3,7 @@ import fs from 'fs/promises'
 import { LinkedList } from '@models/LinkedList'
 import { LinkedListFunctions } from '@functions/LinkedList'
 import { StackFunctions } from '@functions/Stack'
+import { ArrayFunctions } from '@functions/Array'
 
 export type GraphArray = boolean[][]
 
@@ -461,5 +462,107 @@ export class Graph {
       this.getArticulationsDFS().length === 0 &&
       this.getBridgesDFS().length === 0
     )
+  }
+
+  public FleuryAlgorithm (): Array<number> {
+    if (!ArrayFunctions.hasEulerianTrail(this)) {
+      return []
+    }
+
+    const startNode = this.nodesList.find(n => this.getNodeGrade(n) % 2 === 1) || this.nodesList[1]
+    const trail: Array<number> = [startNode]
+    const clone = this.clone(this)
+
+    let currentNode = startNode
+    do {
+      const connecteds = clone.getConnectedNodes(currentNode)
+
+      const bridges = clone.getBridgesDFS()
+      const isBridge = (n: number): boolean => bridges.some(([a, b]) => (
+        a === currentNode && b === n ||
+        b === currentNode && a === n
+      ))
+
+      currentNode = connecteds.find(n => !isBridge(n)) || connecteds[0]
+
+      trail.push(currentNode)
+      clone.disconnectNodes(trail[trail.length - 2], currentNode)
+    } while (clone.connections.length > 0)
+    
+
+    return trail
+  }
+
+  public HierholzerAlgorithm (): Array<number> {
+    if (!ArrayFunctions.hasEulerianTrail(this)) {
+      return []
+    }
+
+    const stack: Array<number> = []
+    const trail: Array<number> = []
+
+    const visited: Map<string, Array<number>> = new Map()
+    this.nodesList.forEach(n => { visited[n] = [] })
+
+    const start = this.nodesList[0]
+    stack.push(start)
+
+    while (stack.length) {
+      const top = stack[stack.length - 1]
+      const connecteds = this.getConnectedNodes(top).filter(n => (
+        !visited[top].includes(n) &&
+        !visited[n].includes(top)
+      ))
+
+      if (connecteds.length === 0) {
+        stack.pop()
+        trail.push(top)
+      } else {
+        stack.push(connecteds[0])
+        visited[top].push(connecteds[0])
+      }      
+    }
+
+    return trail
+  }
+
+  public getSmallerHamiltonianCircuit (): Array<Array<number>> {
+    let possibleCircuits: Array<Array<number>> = []
+
+    this.nodesList.forEach(start => {
+      const stack: Array<number> = [start]
+      const visited: Array<number> = []
+
+      while (stack.length) {
+        const node = stack[stack.length - 1]
+        visited.push(node)
+
+        const connecteds = this.getConnectedNodes(node).filter(c => !visited.includes(c))
+
+        if (connecteds.length === 0) {
+          possibleCircuits.push([ ...stack ])
+          stack.pop()
+        } else {
+          stack.push(connecteds[0])
+        }
+      }      
+    })
+
+    possibleCircuits = possibleCircuits
+      .filter(p => p.length === this.nodesList.length)
+      .filter(p => this.hasConnection(p[0], p[p.length -1]))
+
+    if (possibleCircuits.length) {
+      const circuit = possibleCircuits[0]
+      const connections: Array<Array<number>> = []
+
+      circuit.forEach((n, i) => {
+        connections.push([n, circuit[i === (circuit.length+1) ? 0 : i+1]])
+      })
+
+      return connections
+    }
+
+    return []
   }
 }
